@@ -50,9 +50,8 @@ jobs:
           chmod 600 ~/.ssh/RamiKey.pem
 
 
-      - name: Apply only if there are changes
+      - name:  Terraform Apply 
         working-directory: terraform
-        if: steps.plan.outputs.stdout != ''
         run: terraform apply -auto-approve tfplan
 
 
