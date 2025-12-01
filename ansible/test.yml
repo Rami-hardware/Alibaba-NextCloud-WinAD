@@ -4,9 +4,7 @@
 
 
   roles:  
-    - Update
     - docker_setup
     - docker_app
     - Nextcloud
     - OSS
-    
