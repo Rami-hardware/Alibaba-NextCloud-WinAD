@@ -1,0 +1,14 @@
+---
+# Handler to restart chrony when time sync configuration changes
+- name: restart chrony
+  service:
+    name: chrony
+    state: restarted
+    enabled: true
+
+# Handler to restart sssd when configuration changes
+- name: restart sssd
+  service:
+    name: sssd
+    state: restarted
+    enabled: true

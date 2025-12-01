@@ -7,8 +7,4 @@
     - vars/main.yml
 
   roles:  
-    - docker_setup
-    - docker_app
-    - Nextcloud
-    - OSS
     - join_ad
