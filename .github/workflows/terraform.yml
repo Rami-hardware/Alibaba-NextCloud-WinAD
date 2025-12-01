@@ -49,8 +49,8 @@ jobs:
             echo "${{ secrets.ALI_PEM_KEY }}" > ~/.ssh/aliyun_key.pem
             chmod 600 ~/.ssh/aliyun_key.pem
 
-
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' 
+      - name: Apply only if there are changes
         working-directory: terraform
+        if: steps.plan.outputs.stdout != ''
         run: terraform apply -auto-approve tfplan
+
