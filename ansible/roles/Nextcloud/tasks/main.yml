@@ -1,0 +1,9 @@
+  - name: Wait for Nextcloud to be ready
+    uri:
+      url: http://localhost:8080
+      status_code: 200
+      validate_certs: no
+    register: result
+    retries: 20
+    delay: 10
+    until: result.status == 200

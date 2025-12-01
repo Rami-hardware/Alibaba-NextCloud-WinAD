@@ -1,0 +1,38 @@
+  # --- ⚙️ Configure OSS Storage ---
+  - name: Enable maintenance mode
+    community.docker.docker_container_exec:
+      container: "{{ nextcloud_container }}"
+      command: php occ maintenance:mode --on
+
+  - name: Set objectstore class to S3 (Aliyun OSS compatible)
+    community.docker.docker_container_exec:
+      container: "{{ nextcloud_container }}"
+      command: php occ config:system:set objectstore class --value="\\OC\\Files\\ObjectStore\\S3"
+
+  - name: Configure Aliyun OSS as primary storage
+    community.docker.docker_container_exec:
+      container: "{{ nextcloud_container }}"
+      command: >
+        php occ config:system:set objectstore arguments --value='{
+          "bucket": "{{ oss_bucket }}",
+          "autocreate": true,
+          "key": "{{ oss_access_key }}",
+          "secret": "{{ oss_secret_key }}",
+          "region": "{{ oss_region }}",
+          "hostname": "{{ oss_hostname }}",
+          "port": 443,
+          "use_ssl": true,
+          "verify": false
+        }' --type=json
+
+  - name: Disable maintenance mode
+    community.docker.docker_container_exec:
+      container: "{{ nextcloud_container }}"
+      command: php occ maintenance:mode --off
+
+  # --- 🌐 Trusted Domains ---
+  - name: Add trusted domains
+    community.docker.docker_container_exec:
+      container: nextcloud_app
+      command: >
+        php occ config:system:set trusted_domains 1 --value=localhost && php occ config:system:set trusted_domains 2 --value=127.0.0.1 && php occ config:system:set trusted_domains 3 --value=8.213.35.77 && php occ config:system:set trusted_domains 4 --value=nextcloud.respawnxd.co

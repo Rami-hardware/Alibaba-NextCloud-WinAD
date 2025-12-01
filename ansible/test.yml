@@ -2,8 +2,11 @@
   hosts: nextcloud-ecs
   become: true
 
- 
-  tasks:
-    - name: Update apt cache again
-      apt:
-        update_cache: true
+
+  roles:  
+    - Update
+    - docker_setup
+    - docker_app
+    - Nextcloud
+    - OSS
+    
