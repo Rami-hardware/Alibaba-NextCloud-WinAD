@@ -74,7 +74,13 @@
   failed_when: adcli_output.rc != 0
   notify: restart sssd
 
-
+- name: Ensure /etc/krb5.keytab has correct permissions
+  file:
+    path: /etc/krb5.keytab
+    owner: root
+    group: root
+    mode: '0600'
+  when: adcli_output is succeeded
 
 - name: Ensure /etc/sssd/sssd.conf from template
   template:
