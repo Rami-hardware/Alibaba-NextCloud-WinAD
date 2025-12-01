@@ -10,35 +10,28 @@ on:
 
 jobs:
   terraform:
-    name: Terraform Workflow
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.7.6   # Change to your required version
+          terraform_version: 1.7.6   # adjust as needed
 
-      # Step 3: Terraform init
       - name: Terraform Init
         run: terraform init
 
-      # Step 4: Terraform validate
       - name: Terraform Validate
         run: terraform validate
 
-      # Step 5: Terraform plan
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      # Optional: Save plan artifact
       - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tfplan
           path: tfplan

@@ -27,6 +27,7 @@ resource "alicloud_security_group" "default" {
   vpc_id = alicloud_vpc.vpc.id
 }
 
+
 resource "alicloud_instance" "instance" {
   availability_zone = local.availability_zone
   security_groups   = alicloud_security_group.default.*.id
