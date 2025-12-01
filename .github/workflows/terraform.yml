@@ -19,7 +19,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.7.6   # adjust as needed
+          terraform_version:  ">=1.6 <2.0"  # adjust as needed
 
       - name: Terraform Init
         run: terraform init
