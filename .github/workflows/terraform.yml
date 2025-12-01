@@ -46,8 +46,8 @@ jobs:
       - name: Setup PEM file
         run: |
             mkdir -p ~/.ssh
-            echo "${{ secrets.ALI_PEM_KEY }}" > ~/.ssh/aliyun_key.pem
-            chmod 600 ~/.ssh/aliyun_key.pem
+            echo "${{ secrets.ALI_PEM_KEY }}" > ~/.ssh/RamiKey.pem
+            chmod 600 ~/.ssh/RamiKey.pem
 
       - name: Apply only if there are changes
         working-directory: terraform
