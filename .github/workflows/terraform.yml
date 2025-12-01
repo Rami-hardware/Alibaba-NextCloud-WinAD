@@ -13,7 +13,7 @@ env:                         # <-- define env here once for the whole job
     ALICLOUD_SECRET_KEY: ${{ secrets.ALICLOUD_SECRET_KEY }}
 
 jobs:
-  terraform:
+  infra:
     runs-on: ubuntu-latest
 
     steps:
@@ -64,8 +64,11 @@ jobs:
         run: |
           echo "[ecs]" > inventory.ini
           echo "test-server ansible_host=${{ secrets.ECS_HOST }} ansible_user=${{ secrets.ECS_USER }} ansible_private_key_file=~/.ssh/aliyun_key.pem" >> inventory.ini
+      
       - name: Setup Ansible Vault password
-        run: echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > ~/.ansible/vault_pass.txt
+        run: |
+          mkdir -p ~/.ansible
+          echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > ~/.ansible/vault_pass.txt
       
       - name: Run Ansible
         working-directory: ansible 
