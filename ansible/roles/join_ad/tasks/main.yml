@@ -63,7 +63,7 @@
 - name: Join domain using adcli (stdin password)
   command: >
     echo '{{ ad_password }}' | adcli join --domain={{ ad_domain }}
-    --login-user={{ ad_user }} --stdin-password --show-details --verbose
+    --login-user={{ ad_admin_user }} --stdin-password --show-details --verbose
   register: adcli_output
   failed_when: adcli_output.rc != 0
   notify: restart sssd
