@@ -54,3 +54,18 @@ jobs:
         if: steps.plan.outputs.stdout != ''
         run: terraform apply -auto-approve tfplan
 
+      - name: Disable SSH host key checking
+        run: |
+          mkdir -p ~/.ssh
+          echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+          chmod 600 ~/.ssh/config
+
+      - name: Create inventory file
+        run: |
+          echo "[ecs]" > inventory.ini
+          echo "test-server ansible_host=${{ secrets.ECS_HOST }} ansible_user=${{ secrets.ECS_USER }} ansible_private_key_file=~/.ssh/aliyun_key.pem" >> inventory.ini
+
+      # Step 9: Run Ansible playbook
+      - name: Run Ansible
+        run: |
+          ansible-playbook -i inventory.ini playbook.yml
