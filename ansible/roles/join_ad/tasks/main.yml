@@ -74,14 +74,6 @@
   failed_when: adcli_output.rc != 0
   notify: restart sssd
 
-- name: Ensure /etc/krb5.keytab has correct permissions
-  file:
-    path: /etc/krb5.keytab
-    owner: root
-    group: root
-    mode: '0600'
-  when: adcli_output is succeeded
-
 - name: Ensure /etc/sssd/sssd.conf from template
   template:
     src: sssd.conf.j2
@@ -122,6 +114,19 @@
     owner: root
     group: root
     mode: '0644'
+  
+- name: Wait for /etc/krb5.keytab to be created
+  wait_for:
+    path: /etc/krb5.keytab
+    state: present
+    timeout: 60
+
+- name: Set permissions on /etc/krb5.keytab
+  file:
+    path: /etc/krb5.keytab
+    owner: root
+    group: root
+    mode: '0600'
 
 - name: Ensure sssd service running
   service:
