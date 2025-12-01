@@ -60,19 +60,23 @@
     mode: '0644'
   notify: restart sssd
 
-- name: Join domain using adcli (stdin password, create host keytab)
+- name: Join domain using adcli and create keytab
   command: >
-    echo '{{ ad_password }}' |
+    bash -c "echo '{{ ad_password }}' |
     adcli join
       --domain={{ ad_domain }}
       --login-user={{ ad_admin_user }}
       --stdin-password
-      -K /etc/krb5.keytab
+      --host-keytab=/etc/krb5.keytab
       --show-details
-      --verbose
+      --verbose"
   register: adcli_output
+  changed_when: "'Added the entries to the keytab' in adcli_output.stdout"
   failed_when: adcli_output.rc != 0
   notify: restart sssd
+
+
+
 
 - name: Ensure /etc/sssd/sssd.conf from template
   template:
@@ -105,7 +109,7 @@
     owner: root
     group: root
     mode: '0644'
-
+    
 - name: Ensure PAM mkhomedir is enabled (RHEL/CentOS)
   when: ansible_facts['os_family'] == 'RedHat'
   copy:
@@ -114,19 +118,6 @@
     owner: root
     group: root
     mode: '0644'
-  
-- name: Wait for /etc/krb5.keytab to be created
-  wait_for:
-    path: /etc/krb5.keytab
-    state: present
-    timeout: 60
-
-- name: Set permissions on /etc/krb5.keytab
-  file:
-    path: /etc/krb5.keytab
-    owner: root
-    group: root
-    mode: '0600'
 
 - name: Ensure sssd service running
   service:
