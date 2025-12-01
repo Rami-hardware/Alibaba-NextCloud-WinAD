@@ -66,6 +66,7 @@ jobs:
           echo "test-server ansible_host=${{ secrets.ECS_HOST }} ansible_user=${{ secrets.ECS_USER }} ansible_private_key_file=~/.ssh/aliyun_key.pem" >> inventory.ini
       
       - name: Setup Ansible Vault password
+        working-directory: ansible 
         run: |
           # Create the folder if it doesn't exist
           mkdir -p ~/.ansible
