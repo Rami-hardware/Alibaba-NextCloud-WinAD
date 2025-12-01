@@ -36,7 +36,7 @@ resource "alicloud_instance" "instance" {
   instance_name              = "nextcloud-ecs"
   vswitch_id        = alicloud_vswitch.vsw.id
   internet_max_bandwidth_out = 10
-  key_name = "Ans"
+  key_name = "RamiKey"
   system_disk_size = 200
 }
 
