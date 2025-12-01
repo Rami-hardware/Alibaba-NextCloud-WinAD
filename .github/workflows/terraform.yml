@@ -67,8 +67,13 @@ jobs:
       
       - name: Setup Ansible Vault password
         run: |
+          # Create the folder if it doesn't exist
           mkdir -p ~/.ansible
+          # Write the vault password into a file
           echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > ~/.ansible/vault_pass.txt
+          # Set restrictive permissions
+          chmod 600 ~/.ansible/vault_pass.txt
+
       
       - name: Run Ansible
         working-directory: ansible 
