@@ -53,7 +53,7 @@ resource "alicloud_security_group_rule" "allow_all_tcp" {
 resource "alicloud_security_group_rule" "allow_ssh" {
   type              = "ingress"
   ip_protocol       = "tcp"
-  nic_type          = "internet"
+  nic_type          = "intranet"
   policy            = "accept"
   port_range        = "22/22"
   priority          = 1
