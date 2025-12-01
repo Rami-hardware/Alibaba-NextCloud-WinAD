@@ -68,8 +68,6 @@
   changed_when: "'Added the entries to the keytab' in adcli_output.stdout"
   notify: restart sssd
 
-
-
 - name: Ensure /etc/sssd/sssd.conf from template
   template:
     src: sssd.conf.j2
