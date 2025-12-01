@@ -26,8 +26,6 @@ jobs:
           terraform_version:  ">=1.6 <2.0"  
 
       - name: Terraform Init
-        ALICLOUD_ACCESS_KEY: ${{ secrets.ALICLOUD_ACCESS_KEY }}
-        ALICLOUD_SECRET_KEY: ${{ secrets.ALICLOUD_SECRET_KEY }}
         working-directory: terraform
         run: terraform init
 
