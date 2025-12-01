@@ -101,13 +101,12 @@
     owner: root
     group: root
     mode: '0644'
-
-
-- name: Ensure PAM mkhomedir is enabled (Debian/Ubuntu uses pam_mkhomedir)
+    
+- name: Ensure PAM mkhomedir is enabled (RHEL/CentOS)
+  when: ansible_facts['os_family'] == 'RedHat'
   copy:
     dest: /etc/pam.d/common-session.d/sssd_mkhomedir
-    content: |
-      session required pam_mkhomedir.so skel=/etc/skel/ umask=0022
+    content: "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022\n"
     owner: root
     group: root
     mode: '0644'
