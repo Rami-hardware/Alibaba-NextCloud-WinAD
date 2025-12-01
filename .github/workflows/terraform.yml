@@ -60,23 +60,16 @@ jobs:
           echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
           chmod 600 ~/.ssh/config
 
-      - name: Create inventory file
-        run: |
-          echo "[ecs]" > inventory.ini
-          echo "test-server ansible_host=${{ secrets.ECS_HOST }} ansible_user=${{ secrets.ECS_USER }} ansible_private_key_file=~/.ssh/aliyun_key.pem" >> inventory.ini
-      
       - name: Setup Ansible Vault password
-        working-directory: ansible 
+        working-directory: ansible
         run: |
-          # Create the folder if it doesn't exist
-          mkdir -p ~/.ansible
-          # Write the vault password into a file
-          echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > ~/.ansible/vault_pass.txt
-          # Set restrictive permissions
-          chmod 600 ~/.ansible/vault_pass.txt
+          # Create folder if needed (optional)
+          mkdir -p .
+          # Write vault password inside current folder
+          echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > vault_pass.txt
+          chmod 600 vault_pass.txt
 
-      
       - name: Run Ansible
-        working-directory: ansible 
+        working-directory: ansible
         run: |
           ansible-playbook -i inventory.ini test.yml --vault-password-file vault_pass.txt
