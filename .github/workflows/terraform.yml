@@ -73,8 +73,8 @@ jobs:
       - name: Test SSH connection
         run: ssh -i ~/.ssh/RamiKey.pem root@8.213.49.218 "echo connected"
 
-              
-      - name: Run Ansible
-        working-directory: ansible
+      - name: Run Ansible - join AD
         run: |
-          ansible-playbook -i inventory.ini deploy.yml --vault-password-file vault_pass.txt
+          ansible-playbook -i inventory.ini playbook.yml \
+            -e "ad_admin_password=${{ secrets.AD_ADMIN_PASSWORD }}" \
+            -e "ad_domain=fac.local ad_realm=FAC.LOCAL ad_server=10.50.6.206 ad_admin_user=administrator"

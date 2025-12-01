@@ -1,0 +1,115 @@
+---
+- name: Ensure apt cache is up to date
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install required packages for AD join
+  apt:
+    name:
+      - realmd
+      - sssd
+      - sssd-tools
+      - adcli
+      - samba-common-bin
+      - krb5-user
+      - libnss-sss
+      - libpam-sss
+      - oddjob
+      - oddjob-mkhomedir
+      - packagekit
+      - policykit-1
+      - chrony
+    state: present
+
+- name: Configure chrony to sync with AD domain controller
+  blockinfile:
+    path: /etc/chrony/chrony.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - AD TIME"
+    block: |
+      server {{ ad_server }} iburst
+      # Prefer AD for all time sync
+      prefer
+  notify: restart chrony
+
+
+- name: Ensure chrony is running
+  service:
+    name: chrony
+    state: started
+    enabled: true
+
+- name: Discover domain
+  command: realm discover {{ ad_domain }}
+  register: realm_discover
+  failed_when: false
+  changed_when: false
+
+- name: Configure /etc/krb5.conf
+  template:
+    src: krb5.conf.j2
+    dest: /etc/krb5.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart sssd
+
+- name: Join domain using adcli (stdin password)
+  vars:
+    join_cmd: "echo '{{ ad_admin_password }}' | adcli join --domain={{ ad_domain }} --login-user={{ ad_admin_user }} --stdin-password --show-details --verbose"
+  shell: "{{ join_cmd }}"
+  register: adcli_join
+  when: >
+    realm_discover.rc != 0
+    or
+    ('configured: no' in realm_discover.stdout)
+  changed_when: "'success' in adcli_join.stdout"
+  failed_when: adcli_join.rc != 0 and "'already joined' not in adcli_join.stdout"
+
+
+- name: Ensure /etc/sssd/sssd.conf from template
+  template:
+    src: sssd.conf.j2
+    dest: /etc/sssd/sssd.conf
+    owner: root
+    group: root
+    mode: '0600'
+  notify: restart sssd
+
+- name: Configure nsswitch to use sss
+  lineinfile:
+    path: /etc/nsswitch.conf
+    regexp: '^(passwd:).*'
+    line: 'passwd:         compat systemd sss'
+    backrefs: yes
+
+- name: Configure group to use sss
+  lineinfile:
+    path: /etc/nsswitch.conf
+    regexp: '^(group:).*'
+    line: 'group:          compat systemd sss'
+    backrefs: yes
+
+- name: Ensure PAM mkhomedir is enabled (Debian/Ubuntu uses pam_mkhomedir)
+  copy:
+    dest: /etc/pam.d/common-session.d/sssd_mkhomedir
+    content: |
+      session required pam_mkhomedir.so skel=/etc/skel/ umask=0022
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Ensure sssd service running
+  service:
+    name: sssd
+    state: started
+    enabled: true
+
+# Optional: add AD group to sudoers (comment/uncomment if desired)
+# - name: Give Domain Admins sudo rights (optional)
+#   copy:
+#     dest: /etc/sudoers.d/domain_admins
+#     content: "%{{ ad_netbios }}\\\\Domain\ Admins ALL=(ALL) NOPASSWD:ALL"
+#     owner: root
+#     group: root
+#     mode: '0440'
