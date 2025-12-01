@@ -67,5 +67,6 @@ jobs:
 
       # Step 9: Run Ansible playbook
       - name: Run Ansible
+        working-directory: ansible 
         run: |
           ansible-playbook -i inventory.ini playbook.yml
