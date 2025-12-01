@@ -29,10 +29,3 @@
     community.docker.docker_container_exec:
       container: "{{ nextcloud_container }}"
       command: php occ maintenance:mode --off
-
-  # --- 🌐 Trusted Domains ---
-  - name: Add trusted domains
-    community.docker.docker_container_exec:
-      container: nextcloud_app
-      command: >
-        php occ config:system:set trusted_domains 1 --value=localhost && php occ config:system:set trusted_domains 2 --value=127.0.0.1 && php occ config:system:set trusted_domains 3 --value=8.213.35.77 && php occ config:system:set trusted_domains 4 --value=nextcloud.respawnxd.co
