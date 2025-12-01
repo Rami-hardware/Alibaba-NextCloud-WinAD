@@ -74,6 +74,7 @@ jobs:
         run: ssh -i ~/.ssh/RamiKey.pem root@8.213.49.218 "echo connected"
 
       - name: Run Ansible - join AD
+        working-directory: ansible
         run: |
           ansible-playbook -i inventory.ini deploy.yml \
             -e "ad_admin_password=${{ secrets.AD_ADMIN_PASSWORD }}" \
