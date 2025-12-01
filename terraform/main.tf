@@ -33,7 +33,7 @@ resource "alicloud_instance" "instance" {
   instance_type              = "ecs.hfg6.large"
   system_disk_category       = "cloud_essd"
   image_id                   = "ubuntu_24_04_x64_20G_alibase_20250916.vhd"
-  instance_name              = "test_foo"
+  instance_name              = "nextcloud-ecs"
   vswitch_id        = alicloud_vswitch.vsw.id
   internet_max_bandwidth_out = 10
   key_name = "Ans"

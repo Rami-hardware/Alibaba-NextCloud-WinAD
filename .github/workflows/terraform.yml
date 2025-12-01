@@ -43,6 +43,13 @@ jobs:
           name: tfplan
           path: tfplan
 
+      - name: Setup PEM file
+        run: |
+            mkdir -p ~/.ssh
+            echo "${{ secrets.ALI_PEM_KEY }}" > ~/.ssh/aliyun_key.pem
+            chmod 600 ~/.ssh/aliyun_key.pem
+
+
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' 
         working-directory: terraform
