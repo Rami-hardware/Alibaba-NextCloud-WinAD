@@ -1,4 +1,10 @@
 ---
+- name: Ensure AD DNS is set
+  lineinfile:
+    path: /etc/resolv.conf
+    line: "nameserver {{ ad_server }}"
+    state: present
+
 - name: Ensure apt cache is up to date
   apt:
     update_cache: yes
