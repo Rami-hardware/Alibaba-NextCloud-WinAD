@@ -71,7 +71,7 @@ jobs:
           chmod 600 vault_pass.txt
 
       - name: Test SSH connection
-        run: ssh -i ~/.ssh/RamiKey.pem root@8.213.35.77 "echo connected"
+        run: ssh -i ~/.ssh/RamiKey.pem root@8.213.49.218 "echo connected"
 
               
       - name: Run Ansible
