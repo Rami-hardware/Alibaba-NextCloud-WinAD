@@ -61,16 +61,13 @@
   notify: restart sssd
 
 - name: Join domain using adcli (stdin password)
-  vars:
-    join_cmd: "echo '{{ ad_admin_password }}' | adcli join --domain={{ ad_domain }} --login-user={{ ad_admin_user }} --stdin-password --show-details --verbose"
-  shell: "{{ join_cmd }}"
-  register: adcli_join
-  when: >
-    realm_discover.rc != 0
-    or
-    ('configured: no' in realm_discover.stdout)
-  changed_when: "'success' in adcli_join.stdout"
-  failed_when: adcli_join.rc != 0 and "'already joined' not in adcli_join.stdout"
+  command: >
+    echo '{{ ad_password }}' | adcli join --domain={{ ad_domain }}
+    --login-user={{ ad_user }} --stdin-password --show-details --verbose
+  register: adcli_output
+  failed_when: adcli_output.rc != 0
+  notify: restart sssd
+
 
 
 - name: Ensure /etc/sssd/sssd.conf from template
